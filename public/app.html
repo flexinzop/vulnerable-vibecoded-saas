@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>AstroVibe - Mapa Astral</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-900 text-slate-50">
+  <div class="min-h-screen flex flex-col">
+    <header class="border-b border-slate-800/80 bg-slate-950/60 backdrop-blur">
+      <div class="mx-auto max-w-4xl px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="h-8 w-8 rounded-full bg-gradient-to-tr from-purple-500 via-fuchsia-500 to-amber-400 flex items-center justify-center text-xs font-semibold">
+            ✦
+          </div>
+          <div>
+            <p class="text-sm font-semibold tracking-tight">
+              Astro<span class="text-purple-400">Vibe</span>
+            </p>
+            <p class="text-[11px] text-slate-400">
+              Seu mapa astral em segundos.
+            </p>
+          </div>
+        </div>
+        <a
+          href="/logout"
+          class="inline-flex items-center gap-1 rounded-full border border-slate-700/80 bg-slate-900/70 px-3 py-1.5 text-[11px] font-medium text-slate-200 hover:bg-slate-800/80 transition"
+        >
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400/90 animate-pulse"></span>
+          Sair
+        </a>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <div class="mx-auto max-w-4xl px-4 py-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] items-start">
+
+        <!-- Formulário de mapa -->
+        <section class="bg-slate-950/70 backdrop-blur border border-slate-800 rounded-2xl shadow-xl shadow-slate-950/40 p-6">
+          <h2 class="text-xl font-semibold tracking-tight mb-1">
+            Criar mapa astral
+          </h2>
+          <p class="text-xs text-slate-400 mb-5">
+            Preencha seus dados de nascimento para gerar um mapa astral com um toque de magia cósmica ✨
+          </p>
+
+          <form method="POST" action="/createmap" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Data de nascimento</label>
+                <input
+                  type="date"
+                  name="birth_date"
+                  required
+                  class="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-slate-300 mb-1">Hora de nascimento</label>
+                <input
+                  type="time"
+                  name="birth_time"
+                  required
+                  class="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Cidade de nascimento</label>
+              <input
+                type="text"
+                name="city"
+                required
+                placeholder="Ex: São Paulo, SP"
+                class="w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 via-fuchsia-500 to-rose-500 px-3 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-400/40 transition"
+            >
+              <span>Gerar meu mapa astral</span>
+            </button>
+
+            <p class="text-[11px] text-slate-500">
+              Dica: use os dados mais exatos que tiver para um resultado mais alinhado com o universo.
+            </p>
+          </form>
+        </section>
+
+        <!-- Resultado do mapa -->
+        <section class="space-y-3">
+          <div class="bg-slate-950/70 backdrop-blur border border-slate-800 rounded-2xl p-5 min-h-[180px]" id="mapResultContainer">
+            <div id="mapResultEmpty" class="flex h-full flex-col items-center justify-center text-center text-xs text-slate-400">
+              <p class="mb-1">Seu mapa aparecerá aqui assim que você gerar um novo.</p>
+              <p class="text-[11px] text-slate-500">
+                Enquanto isso, respire fundo e conecte-se com a energia das estrelas 🌌
+              </p>
+            </div>
+            <div id="mapResult" class="hidden"></div>
+          </div>
+
+          <div class="rounded-2xl border border-purple-500/30 bg-gradient-to-r from-purple-950/80 via-slate-950/80 to-indigo-950/80 px-4 py-3 text-[11px] text-slate-200 shadow-lg shadow-purple-950/40">
+            <p class="font-medium mb-1.5">Como funciona este MVP?</p>
+            <p class="text-slate-300/90">
+              Neste protótipo, o signo é gerado de forma simplificada e aleatória, apenas para simular a experiência final.
+              A lógica astrológica real pode ser plugar APIs ou bibliotecas especializadas depois.
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const mapId = params.get("map_id");
+    const resultBox = document.getElementById("mapResult");
+    const resultEmpty = document.getElementById("mapResultEmpty");
+    const container = document.getElementById("mapResultContainer");
+
+    if (mapId) {
+      fetch("/api/map/" + mapId)
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data || data.error) {
+            resultEmpty.innerHTML =
+              '<p class="text-rose-300 text-xs">Não foi possível carregar o mapa astral. Tente gerar novamente.</p>';
+            return;
+          }
+
+          resultBox.innerHTML = `
+            <h3 class="text-sm font-semibold tracking-tight mb-1.5">Seu mapa astral</h3>
+            <p class="text-[11px] text-slate-400 mb-3">
+              Este é um preview básico com dados de exemplo. A versão completa pode trazer muito mais camadas cósmicas.
+            </p>
+            <dl class="space-y-1.5 text-xs">
+              <div class="flex justify-between gap-4">
+                <dt class="text-slate-400">ID do mapa</dt>
+                <dd class="font-mono text-slate-100 text-[11px]">#${data.id}</dd>
+              </div>
+              <div class="flex justify-between gap-4">
+                <dt class="text-slate-400">Signo principal</dt>
+                <dd class="font-semibold text-purple-300">${data.sign}</dd>
+              </div>
+              <div class="flex justify-between gap-4">
+                <dt class="text-slate-400">Data de nascimento</dt>
+                <dd class="text-slate-100">${data.birth_date}</dd>
+              </div>
+              <div class="flex justify-between gap-4">
+                <dt class="text-slate-400">Hora</dt>
+                <dd class="text-slate-100">${data.birth_time}</dd>
+              </div>
+              <div class="flex justify-between gap-4">
+                <dt class="text-slate-400">Cidade</dt>
+                <dd class="text-slate-100">${data.city}</dd>
+              </div>
+            </dl>
+          `;
+
+          resultEmpty.classList.add("hidden");
+          resultBox.classList.remove("hidden");
+          container.classList.add("border-purple-500/60", "shadow-purple-500/30");
+        })
+        .catch(() => {
+          resultEmpty.innerHTML =
+            '<p class="text-rose-300 text-xs">Não foi possível carregar o mapa astral. Tente novamente mais tarde.</p>';
+        });
+    }
+  </script>
+</body>
+</html>
+
+

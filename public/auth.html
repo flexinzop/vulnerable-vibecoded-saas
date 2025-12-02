@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>AstroVibe - Entrar ou Cadastrar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-purple-900 text-slate-50">
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-md">
+      <div class="mb-8 text-center">
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-50">
+          Astro<span class="text-purple-400">Vibe</span>
+        </h1>
+        <p class="mt-2 text-sm text-slate-300">
+          Conecte-se às suas estrelas. Crie seu mapa astral em poucos cliques.
+        </p>
+      </div>
+
+      <div class="bg-slate-900/70 backdrop-blur rounded-2xl shadow-xl border border-slate-800">
+        <div class="px-6 pt-6 pb-2 border-b border-slate-800">
+          <div class="flex items-center gap-2 text-xs text-slate-400">
+            <span class="inline-flex h-2 w-2 rounded-full bg-emerald-400/80 animate-pulse"></span>
+            <span>Você está em um ambiente seguro e privado.</span>
+          </div>
+          <div id="messages" class="mt-3 text-sm"></div>
+        </div>
+
+        <div class="px-6 pt-4 pb-6">
+          <div class="flex rounded-full bg-slate-800/80 p-1 mb-6 text-xs">
+            <button
+              id="loginTab"
+              class="flex-1 py-2 rounded-full font-medium transition data-[active=true]:bg-slate-50 data-[active=true]:text-slate-900"
+              data-active="true"
+              type="button"
+            >
+              Entrar
+            </button>
+            <button
+              id="registerTab"
+              class="flex-1 py-2 rounded-full font-medium transition data-[active=true]:bg-slate-50 data-[active=true]:text-slate-900"
+              type="button"
+            >
+              Cadastrar
+            </button>
+          </div>
+
+          <!-- LOGIN -->
+          <form
+            id="loginForm"
+            method="POST"
+            action="/login"
+            class="space-y-4"
+          >
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">E-mail</label>
+              <input
+                type="email"
+                name="email"
+                required
+                class="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="voce@exemplo.com"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Senha</label>
+              <input
+                type="password"
+                name="password"
+                required
+                class="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="Sua senha secreta"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-purple-500 via-fuchsia-500 to-rose-500 px-3 py-2 text-sm font-semibold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-400/40 transition"
+            >
+              Entrar e ver meu mapa
+            </button>
+          </form>
+
+          <!-- CADASTRO -->
+          <form
+            id="registerForm"
+            method="POST"
+            action="/register"
+            class="space-y-4 hidden"
+          >
+            <div class="text-xs text-slate-300 mb-1.5">
+              Crie sua conta para salvar e revisitar seus mapas astrais.
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">E-mail</label>
+              <input
+                type="email"
+                name="email"
+                required
+                class="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="voce@exemplo.com"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Senha</label>
+              <input
+                type="password"
+                name="password"
+                required
+                class="w-full rounded-xl border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="Crie uma senha segura"
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-full inline-flex items-center justify-center rounded-xl bg-slate-50/95 px-3 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-slate-800/40 hover:bg-white transition"
+            >
+              Criar conta
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <p class="mt-6 text-center text-[11px] text-slate-500">
+        Ao continuar, você concorda com a vibração cósmica da AstroVibe.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const messagesEl = document.getElementById("messages");
+
+    const feedback = [];
+    if (params.get("registered")) {
+      feedback.push('<p class="text-emerald-400 text-xs">Cadastro realizado com sucesso! Faça login para continuar.</p>');
+    }
+    if (params.get("error") === "invalid") {
+      feedback.push('<p class="text-rose-400 text-xs">Login inválido. Confira seu e-mail e senha.</p>');
+    }
+    if (params.get("error") === "notlogged") {
+      feedback.push('<p class="text-amber-300 text-xs">Você precisa estar logado para criar seu mapa astral.</p>');
+    }
+    messagesEl.innerHTML = feedback.join("");
+
+    const loginTab = document.getElementById("loginTab");
+    const registerTab = document.getElementById("registerTab");
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+
+    function setActiveTab(tab) {
+      if (tab === "login") {
+        loginTab.dataset.active = "true";
+        registerTab.dataset.active = "false";
+        loginForm.classList.remove("hidden");
+        registerForm.classList.add("hidden");
+      } else {
+        loginTab.dataset.active = "false";
+        registerTab.dataset.active = "true";
+        loginForm.classList.add("hidden");
+        registerForm.classList.remove("hidden");
+      }
+    }
+
+    loginTab.addEventListener("click", () => setActiveTab("login"));
+    registerTab.addEventListener("click", () => setActiveTab("register"));
+
+    // Se veio de cadastro bem-sucedido, já deixar na aba de login
+    if (params.get("registered")) {
+      setActiveTab("login");
+    }
+  </script>
+</body>
+</html>
+
+

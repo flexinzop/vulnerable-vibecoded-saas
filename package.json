@@ -1,0 +1,28 @@
+{
+  "name": "vibecoded-astrovibe-saas",
+  "version": "1.0.0",
+  "description": "A vulnerable SaaS application developed using ChatGPT-3.5, created to demonstrate that AI can generate insecure software when not explicitly instructed to prioritise security.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flexinzop/vulnerable-vibecoded-saas.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/flexinzop/vulnerable-vibecoded-saas/issues"
+  },
+  "homepage": "https://github.com/flexinzop/vulnerable-vibecoded-saas#readme",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "sqlite3": "^5.1.7"
+  }
+}
