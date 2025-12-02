@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>AstroVibe MVP</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: 40px auto; }
+    form { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; }
+    input, button { padding: 8px; margin-top: 5px; width: 100%; }
+    #mapResult { border:1px solid #777; padding:10px; margin-top:20px; display:none; }
+  </style>
+</head>
+<body>
+
+<h1>AstroVibe MVP</h1>
+
+<!-- MENSAGENS -->
+<div style="color:red;">
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("registered")) document.write("Cadastro realizado! Faça login.<br>");
+    if (params.get("error") === "invalid") document.write("Login inválido!<br>");
+    if (params.get("error") === "notlogged") document.write("Você precisa estar logado.<br>");
+  </script>
+</div>
+
+<!-- FORM LOGIN -->
+<h2>Login</h2>
+<form method="POST" action="/login">
+  <input type="email" name="email" placeholder="Email" required />
+  <input type="password" name="password" placeholder="Senha" required />
+  <button type="submit">Entrar</button>
+</form>
+
+<!-- FORM REGISTRO -->
+<h2>Cadastro</h2>
+<form method="POST" action="/register">
+  <input type="email" name="email" placeholder="Email" required />
+  <input type="password" name="password" placeholder="Senha" required />
+  <button type="submit">Cadastrar</button>
+</form>
+
+<hr>
+
+<!-- FORM MAPA -->
+<h2>Criar Mapa Astral</h2>
+<form method="POST" action="/createmap">
+  <input type="date" name="birth_date" required />
+  <input type="time" name="birth_time" required />
+  <input type="text" name="city" placeholder="Cidade" required />
+  <button type="submit">Gerar Mapa</button>
+</form>
+
+<a href="/logout">Sair</a>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const mapId = params.get("map_id");
+
+  if (mapId) {
+    fetch("/api/map/" + mapId)
+      .then(res => res.json())
+      .then(data => {
+        const box = document.createElement("div");
+        box.id = "mapResult";
+        box.innerHTML = `
+          <h3>Seu Mapa Astral</h3>
+          <p><b>ID:</b> ${data.id}</p>
+          <p><b>Signo:</b> ${data.sign}</p>
+          <p><b>Data de Nascimento:</b> ${data.birth_date}</p>
+          <p><b>Hora:</b> ${data.birth_time}</p>
+          <p><b>Cidade:</b> ${data.city}</p>
+        `;
+        document.body.appendChild(box);
+        box.style.display = "block";
+      });
+  }
+</script>
+
+</body>
+</html>
