@@ -36,6 +36,33 @@
     <main class="flex-1">
       <div class="mx-auto max-w-4xl px-4 py-8 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] items-start">
 
+        <!-- Admin: Consultar mapa por ID -->
+        <section class="bg-slate-950/70 backdrop-blur border border-yellow-600 rounded-2xl shadow-xl shadow-yellow-900/30 p-6">
+          <h2 class="text-sm font-semibold tracking-tight mb-1 text-yellow-300">
+            🔍 Consulta rápida de mapa (Admin)
+          </h2>
+          <p class="text-[11px] text-slate-400 mb-4">
+            Digite o ID de um mapa para conferir os dados gerados pelos usuários.
+          </p>
+
+          <div class="flex gap-2 items-center">
+            <input
+              type="number"
+              id="adminMapId"
+              placeholder="Ex: 42"
+              class="flex-1 rounded-xl border border-slate-700 bg-slate-900/70 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            />
+            <button
+              id="adminSearchBtn"
+              class="rounded-xl bg-yellow-600 hover:bg-yellow-500 transition px-4 py-2 text-sm font-semibold text-black"
+            >
+              Buscar
+            </button>
+          </div>
+
+          <pre id="adminResult" class="mt-4 text-[11px] text-slate-300 whitespace-pre-wrap"></pre>
+        </section>
+
         <!-- Formulário de mapa -->
         <section class="bg-slate-950/70 backdrop-blur border border-slate-800 rounded-2xl shadow-xl shadow-slate-950/40 p-6">
           <h2 class="text-xl font-semibold tracking-tight mb-1">
@@ -169,6 +196,35 @@
           resultEmpty.innerHTML =
             '<p class="text-rose-300 text-xs">Não foi possível carregar o mapa astral. Tente novamente mais tarde.</p>';
         });
+    }
+
+        // --- ADMIN SEARCH ---
+    const adminBtn = document.getElementById("adminSearchBtn");
+    const adminInput = document.getElementById("adminMapId");
+    const adminResult = document.getElementById("adminResult");
+
+    if (adminBtn) {
+      adminBtn.addEventListener("click", () => {
+        const id = adminInput.value.trim();
+        if (!id) {
+          adminResult.textContent = "Digite um ID válido.";
+          return;
+        }
+
+        fetch("/api/admin/map/" + id)
+          .then(res => res.json())
+          .then(data => {
+            if (data.error) {
+              adminResult.textContent = "❌ " + data.error;
+            } else {
+              adminResult.textContent =
+                "✅ Mapa encontrado:\n\n" + JSON.stringify(data, null, 2);
+            }
+          })
+          .catch(() => {
+            adminResult.textContent = "Erro ao consultar mapa.";
+          });
+      });
     }
   </script>
 </body>

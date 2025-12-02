@@ -52,6 +52,9 @@ db.serialize(() => {
       city TEXT
     )
   `);
+  db.run(`
+    ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0
+  `, (err) => {});
 });
 
 // --- MIDDLEWARE DE AUTENTICAÇÃO ---
@@ -61,6 +64,13 @@ function requireLogin(req, res, next) {
   }
   next();
 }
+
+function requireAdmin(req, res, next) {
+    if (!req.session.userId || req.session.isAdmin !== true) {
+      return res.status(403).json({ error: "Acesso negado" });
+    }
+    next();
+  }
 
 // --- ROTAS ---
 
@@ -87,8 +97,10 @@ app.post("/login", (req, res) => {
     (err, user) => {
       if (err) return res.send("Erro: " + err.message);
       if (!user) return res.redirect("/?error=invalid");
-
+  
       req.session.userId = user.id;
+      req.session.isAdmin = user.is_admin === 1; // <-- ADICIONE ESTA LINHA
+  
       res.redirect("/");
     }
   );
@@ -125,6 +137,49 @@ app.get("/api/map/:id", requireLogin, (req, res) => {
       res.json(map);
     }
   );
+});
+
+app.get("/api/admin/map/:id", requireAdmin, (req, res) => {
+    db.get(
+      "SELECT * FROM maps WHERE id = ?",
+      [req.params.id],
+      (err, map) => {
+        if (err) return res.json({ error: err.message });
+        if (!map) return res.json({ error: "Mapa não encontrado" });
+        res.json(map);
+      }
+    );
+  });
+
+// <-- COLE AQUI
+app.post("/api/me/update", requireLogin, (req, res) => {
+    const updates = req.body;
+  
+    if (!updates || typeof updates !== "object" || Object.keys(updates).length === 0) {
+      return res.status(400).json({ error: "Nada enviado para atualizar." });
+    }
+  
+    const fields = [];
+    const values = [];
+  
+    for (const [key, value] of Object.entries(updates)) {
+      fields.push(`${key} = ?`);
+      values.push(value);
+    }
+  
+    values.push(req.session.userId);
+  
+    const sql = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
+  
+    db.run(sql, values, function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+  
+      res.json({
+        success: true,
+        updated_fields: Object.keys(updates),
+        changes: this.changes
+      });
+    });
 });
 
 // Logout
